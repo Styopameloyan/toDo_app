@@ -1,0 +1,24 @@
+ input {
+     border: none;
+     border-radius: 5px;
+     height: 40px;
+     padding: 5;
+     width: 250px;
+     outline: none;
+ }
+
+ .alert {
+     max-width: 500px;
+     margin: 0 auto;
+ }
+
+ form div {
+     border: 1px solid black;
+     padding: 5px;
+     width: 280px;
+     border-radius: 5px;
+ }
+
+ .buttonDIV {
+     border: none;
+ }
