@@ -45,7 +45,7 @@ class App extends React.Component {
 
   render() {
     return (<>
-      <Paper className="d-flex align-items-center gap-4 mt-4 p-2 px-4">
+      <Paper className="d-flex align-items-center gap-4 mt-4 p-2 px-4 todoHeader">
         <Typography color="primary" variant="h5">TODOS</Typography>
         <CreateDialog action="create" getData={this.getData.bind(this)} />
         <TextField placeholder="Suchen..." size="small" onChange={(e) => this.handleSearch(e.target.value)} />

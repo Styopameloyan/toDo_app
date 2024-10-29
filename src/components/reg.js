@@ -7,6 +7,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import "../css/reg.css";
 
 
+
 class Reg extends React.Component {
     constructor(props) {
         super(props);
@@ -21,7 +22,9 @@ class Reg extends React.Component {
                 open: false,
                 message: '',
                 severity: ''
-            }
+            },
+
+
         }
     }
 
@@ -36,6 +39,7 @@ class Reg extends React.Component {
 
         let success = { open: true, message: 'Regiestrierung Erfolgreich', severity: 'success' }
         let error = { open: true, message: '', severity: 'error' }
+
         if (this.state.passwort === this.state.passwort2) {
             if (/[A-Z]/.test(this.state.passwort)) {
                 if (/[!@#$%^&*(),.?":{}|<>]/.test(this.state.passwort)) {
@@ -64,7 +68,7 @@ class Reg extends React.Component {
     }
 
 
-    handleAlertClose(message) {
+    handleAlertClose(message,) {
         this.setState({ alert: message })
         setTimeout(() => {
             this.setState({ alert: { open: false } })
@@ -79,12 +83,12 @@ class Reg extends React.Component {
 
         return (<div className='regDiv' >
             <Paper style={{ maxWidth: '500px', margin: '0 auto' }} className="d-flex  mt-5 p-5 row  " >
-                <Typography variant="h5" color="primary" className="d-flex justify-content-center">
+                <Typography variant="h4" color="secondary" className="d-flex justify-content-center">
                     Konto Erstellen
                 </Typography>
 
                 <form className="d-flex flex-column align-items-center mt-5 gap-3" onSubmit={(e) => this.handleSubmit(e)}>
-                    <div >
+                    <div className='inputDiv'>
                         <input
                             required
                             onChange={(e) => this.setState({ benutzername: e.target.value })}
@@ -92,8 +96,7 @@ class Reg extends React.Component {
                             size="small"
                         />
                     </div>
-                    <div>
-
+                    <div className='inputDiv'>
                         <input
                             required
                             onChange={(e) => this.setState({ email: e.target.value })}
@@ -101,7 +104,7 @@ class Reg extends React.Component {
                             size="small"
                         />
                     </div>
-                    <div className="d-flex align-items-center " >
+                    <div className="d-flex align-items-center inputDiv " >
                         <input
                             type={this.state.showPassword}
                             placeholder="Passwort"
@@ -117,7 +120,7 @@ class Reg extends React.Component {
                                 onClick={() => this.setState({ showPassword: "password" })} />
                         )}
                     </div>
-                    <div className="d-flex align-items-center " >
+                    <div className="d-flex align-items-center inputDiv" >
                         <input
                             type={this.state.showPassword}
                             placeholder="Passwort wiederholen"
@@ -125,6 +128,7 @@ class Reg extends React.Component {
 
                             onChange={(e) => this.setState({ passwort2: e.target.value })}
                         />
+
                         {this.state.showPassword ? (
                             <VisibilityIcon
                                 onClick={() => this.setState({ showPassword: "" })} />
@@ -133,26 +137,8 @@ class Reg extends React.Component {
                                 onClick={() => this.setState({ showPassword: "password" })} />
                         )}
                     </div>
-
-                    {/*     <OutlinedInput
-                        required
-                        size='small'
-                        onChange={(e) => this.setState({ passwort: e.target.value })} placeholder="Passwort"
-                        type={this.state.showPassword}
-                        endAdornment={
-                            <IconButton  >
-                                {this.state.showPassword ?
-                                    <VisibilityIcon onClick={() => this.setState({ showPassword: "" })} />
-                                    : <VisibilityOffIcon onClick={() => this.setState({ showPassword: "password" })} />}
-                            </IconButton>
-                        }
-                    /> */}
-
-
-
-
                     <AccordionActions className='buttonDIV'>
-                        <Button type='submit' variant="contained">Registrieren</Button>
+                        <Button type='submit' color='primary' variant="contained">Registrieren</Button>
                     </AccordionActions>
                 </form>
             </Paper>

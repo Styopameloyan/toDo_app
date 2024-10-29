@@ -119,13 +119,8 @@ class CreateDialog extends React.Component {
 
 
     componentDidMount() {
-        // this.generateTestData();
-
+        //this.generateTestData();
     }
-
-
-
-
 
     async generateTestData() {
 
@@ -138,7 +133,6 @@ class CreateDialog extends React.Component {
                     },
                     body: JSON.stringify(item)
                 }
-
                 await fetch("http://localhost:5000/todos", requestOptions)
             } catch (error) {
                 console.error(error)
@@ -218,7 +212,7 @@ class CreateDialog extends React.Component {
     render() {
         const create = this.props.action === "create";
 
-        return <>
+        return < >
 
             {create ?
                 <Tooltip title="Neues Todo erstellen">
@@ -241,25 +235,25 @@ class CreateDialog extends React.Component {
                 </DialogTitle>
                 <form onSubmit={(e) => this.handleSubmit(e)}>
                     <DialogContent>
-                        <div className="row">
 
-                            <TextField
-                                value={this.state.title}
-                                name="Titel"
-                                required
-                                placeholder="Title"
-                                className="col-12 mt-2"
-                                onChange={(e) => this.setState({ title: e.target.value })}
-                            />
 
-                            <TextField
-                                value={this.state.description}
-                                name="Beschreibung"
-                                required placeholder="Beschreibung"
-                                className="col-12 mt-3"
-                                onChange={(e) => this.setState({ description: e.target.value })}
-                            />
-                        </div>
+                        <TextField
+                            value={this.state.title}
+                            name="Titel"
+                            required
+                            placeholder="Title"
+                            className="col-12 mt-2"
+                            onChange={(e) => this.setState({ title: e.target.value })}
+                        />
+
+                        <TextField
+                            value={this.state.description}
+                            name="Beschreibung"
+                            required placeholder="Beschreibung"
+                            className="col-12 mt-3"
+                            onChange={(e) => this.setState({ description: e.target.value })}
+                        />
+
                     </DialogContent>
 
                     <DialogActions>
