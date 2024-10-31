@@ -1,5 +1,5 @@
 import React from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Checkbox, IconButton, } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Checkbox, IconButton, Typography, } from "@mui/material";
 import { Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogTitle, } from "@mui/material";
 import { ExpandMore } from '@mui/icons-material';
 
@@ -67,7 +67,7 @@ class Todo extends React.Component {
             <Accordion expanded={this.state.expandet} >
                 <AccordionSummary expandIcon={<ExpandMore onClick={() => this.setState({ expandet: !this.state.expandet })} />} >
                     <div className={`w-100 ${status ? "" : "text-decoration-line-through text-secondary"}`} onClick={() => this.setState({ expandet: !this.state.expandet })}>
-                        {this.props.item.title}
+                        <Typography variant='h6' >{this.props.item.title}</Typography>
                     </div>
 
                     <div className='d-flex align-items-center' >
@@ -82,22 +82,24 @@ class Todo extends React.Component {
                     </div>
 
                 </AccordionSummary>
-                <AccordionDetails>
+                <Typography variant='subtitle2' style={{ fontWeight: "bold", marginLeft: "10px" }} >Beschreibung:</Typography>
+                <AccordionDetails style={{ backgroundColor: "#f5f5f5", minHeight: "100px" }}>
                     {this.props.item.description}
                 </AccordionDetails>
-            </Accordion>
+            </Accordion >
 
             {/* Löschen DIALOG */}
-            <Dialog open={this.state.open} onClose={() => this.setState({ open: false })}>
+            <Dialog Dialog open={this.state.open} onClose={() => this.setState({ open: false })
+            }>
                 <DialogTitle>Todo wirklich Löschen?</DialogTitle>
                 <DialogActions >
-                    <Button onClick={() => this.delete()} >Löschen</Button>
+                    <Button variant='contained' onClick={() => this.delete()} >Löschen</Button>
                 </DialogActions>
 
                 <Backdrop open={this.state.loader}>
                     <CircularProgress color="inherit" />
                 </Backdrop>
-            </Dialog>
+            </Dialog >
 
         </>;
     }

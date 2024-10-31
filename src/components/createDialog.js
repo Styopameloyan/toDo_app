@@ -171,7 +171,7 @@ class CreateDialog extends React.Component {
             console.error(error)
         }
         finally {
-            this.setState({ loader: false })
+            this.setState({ title: "", description: "", loader: false })
         }
     }
     handleSubmit(e) {
@@ -180,13 +180,7 @@ class CreateDialog extends React.Component {
             this.create()
         } else {
             this.update()
-
         }
-
-
-
-
-
     }
     async update() {
 
@@ -204,6 +198,8 @@ class CreateDialog extends React.Component {
             this.setState({ open: false })
         } catch (error) {
             console.error(error);
+        } finally {
+            this.setState({ loader: false })
         }
     }
 
@@ -240,6 +236,7 @@ class CreateDialog extends React.Component {
                         <TextField
                             value={this.state.title}
                             name="Titel"
+                            label="Titel"
                             required
                             placeholder="Title"
                             className="col-12 mt-2"
@@ -249,15 +246,17 @@ class CreateDialog extends React.Component {
                         <TextField
                             value={this.state.description}
                             name="Beschreibung"
+                            label="Beschreibung"
                             required placeholder="Beschreibung"
                             className="col-12 mt-3"
+                            multiline
                             onChange={(e) => this.setState({ description: e.target.value })}
                         />
 
                     </DialogContent>
 
                     <DialogActions>
-                        <Button type="submit">Speichern</Button>
+                        <Button variant="contained" color="primary" type="submit">Speichern</Button>
                     </DialogActions>
                 </form>
                 <Backdrop open={this.state.loader}>
