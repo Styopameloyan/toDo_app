@@ -10,8 +10,8 @@ class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            reg: true,
-            login: true,
+            reg: false,
+            login: false,
             app: true,
 
         }
@@ -47,8 +47,6 @@ class Main extends React.Component {
             {this.state.reg ? <Reg /> : null}
             {this.state.login ? <Login /> : null}
             {this.state.app ? <App /> : null}
-
-
         </ThemeProvider>;
     }
 }
