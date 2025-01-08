@@ -1,13 +1,11 @@
 
-import { AccordionActions, Alert, Backdrop, Button, CircularProgress, IconButton, Paper, Typography } from '@mui/material';
+import { AccordionActions, Backdrop, Button, CircularProgress, Paper, Typography } from '@mui/material';
 import React from 'react';
-import CloseIcon from '@mui/icons-material/Close';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { UserService } from '../services/User';
+import { enqueueSnackbar } from 'notistack';
 import "../css/reg.css";
-
-
-
 class Reg extends React.Component {
     constructor(props) {
         super(props);
@@ -15,83 +13,41 @@ class Reg extends React.Component {
             passwort: '',
             passwort2: '',
             loader: false,
-            benutzername: '',
+            displayname: '',
             email: '',
             showPassword: "password",
-            alert: {
-                open: false,
-                message: '',
-                severity: ''
-            },
-
-
         }
     }
 
 
     handleSubmit(e) {
         e.preventDefault()
-        this.handlePassCheck()
-
+        const [error, message] = UserService.passCheck(this.state.passwort, this.state.passwort2);
+        if (error) return enqueueSnackbar(message, { variant: "error" });
+        this.createUser();
     }
-
-    handlePassCheck() {
-
-        let success = { open: true, message: 'Regiestrierung Erfolgreich', severity: 'success' }
-        let error = { open: true, message: '', severity: 'error' }
-
-        if (this.state.passwort === this.state.passwort2) {
-            if (/[A-Z]/.test(this.state.passwort)) {
-                if (/[!@#$%^&*(),.?":{}|<>]/.test(this.state.passwort)) {
-                    if (/[0-9]/.test(this.state.passwort)) {
-                        this.handleAlertClose(success)
-                    } else {
-                        error.message = "Passwort muss min. 1 Ziffer enthalten"
-                        this.handleAlertClose(error)
-                        return
-                    }
-                } else {
-                    error.message = "Passwort muss min. 1 Sonderzeichen enthalten"
-                    this.handleAlertClose(error)
-                    return
-                }
-            } else {
-                error.message = "Passwort muss min. 1 Großbuchstaben enthalten"
-                this.handleAlertClose(error)
-                return
-            }
-            this.handleAlertClose(success)
-        } else {
-            error.message = "Passwörter stimmen nicht überein"
-            this.handleAlertClose(error)
+    async createUser() {
+        this.setState({ loader: true });
+        const [error, data] = await UserService.register(this.state.email, this.state.passwort, this.state.displayname);
+        if (error) enqueueSnackbar(error.message, { variant: "error" });
+        else {
+            enqueueSnackbar(`Benutzer ${data.displayName} wurde angelegt.`, { variant: "success" });
+            this.props.closeReg();
         }
     }
-
-
-    handleAlertClose(message,) {
-        this.setState({ alert: message })
-        setTimeout(() => {
-            this.setState({ alert: { open: false } })
-        }, 3000)
-    }
-
-
-
-
 
     render() {
 
         return (<div className='regDiv' >
-            <Paper style={{ maxWidth: '500px', margin: '0 auto' }} className="d-flex  mt-5 p-5 row  " >
+            <Paper style={{ margin: '0 auto' }} className="d-flex  mt-5 p-5 row  " >
                 <Typography variant="h4" color="secondary" className="d-flex justify-content-center">
                     Konto Erstellen
                 </Typography>
-
                 <form className="d-flex flex-column align-items-center mt-5 gap-3" onSubmit={(e) => this.handleSubmit(e)}>
                     <div className='inputDiv'>
                         <input
                             required
-                            onChange={(e) => this.setState({ benutzername: e.target.value })}
+                            onChange={(e) => this.setState({ displayname: e.target.value })}
                             placeholder="Benutzername"
                             size="small"
                         />
@@ -145,27 +101,12 @@ class Reg extends React.Component {
             <Backdrop open={this.state.loader}>
                 <CircularProgress color="inherit" />
             </Backdrop>
-            {this.state.alert.open && (
-                <Alert className='mt-2 alert' severity={this.state.alert.severity}
-                    action={
-                        <IconButton
-                            aria-label="close"
-                            color="inherit"
-                            size="small"
-                            onClick={() => {
-                                this.setState({ alert: { open: false } });
-                            }}
-                        >
-                            <CloseIcon fontSize="inherit" />
-                        </IconButton>
-                    }
-                >
-                    {this.state.alert.message}
-                </Alert>
-            )}
 
+            <Backdrop open={this.state.loader}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
 
-        </div>);
+        </div >);
     }
 }
 

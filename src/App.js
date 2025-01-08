@@ -3,7 +3,7 @@ import CreateDialog from "./components/createDialog";
 import Todo from "./components/todo";
 import { Backdrop, CircularProgress, Paper, TextField, Typography } from "@mui/material";
 import FlipMove from 'react-flip-move';
-
+import { TodoService } from "./services/Todo";
 
 class App extends React.Component {
   constructor(props) {
@@ -21,15 +21,12 @@ class App extends React.Component {
 
   async getData() {
     this.setState({ loader: true })
-    try {
-      const response = await fetch("http://localhost:5000/todos")
-      this.DATA = await response.json()
-      this.setState({ data: this.DATA.sort((a, b) => a.status.localeCompare(b.status)) })
-    } catch (error) {
-      console.error(error)
-    } finally {
-
-      this.setState({ loader: false });
+    const [error, data] = await TodoService.getTodos();
+    if (error) {
+      console.error("Fehler beim Abrufen der Todos:", error.message);
+    } else {
+      this.DATA = data
+      this.setState({ data, loader: false });
     }
   }
 

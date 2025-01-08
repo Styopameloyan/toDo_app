@@ -1,7 +1,9 @@
 import React from "react";
 import { Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Tooltip } from "@mui/material";
 import { Add, Edit } from '@mui/icons-material';
-const testData = [
+import { TodoService } from "../services/Todo";
+import { enqueueSnackbar } from "notistack";
+/* const testData = [
     {
         "title": "Einkaufsliste erstellen",
         "description": "Erstelle eine Liste mit allen benötigten Lebensmitteln für die Woche.",
@@ -103,7 +105,7 @@ const testData = [
         "status": "offen"
     }
 ]
-
+ */
 
 class CreateDialog extends React.Component {
     constructor(props) {
@@ -113,97 +115,65 @@ class CreateDialog extends React.Component {
             open: false,
             title: "",
             description: "",
+            data: []
         }
     }
 
 
 
-    componentDidMount() {
-        //this.generateTestData();
-    }
-
-    async generateTestData() {
-
-        for (const item of testData) {
-            try {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(item)
-                }
-                await fetch("http://localhost:5000/todos", requestOptions)
-            } catch (error) {
-                console.error(error)
-            }
-        }
-    }
-
-    handleOpen() {
-        this.setState({ open: true });
-        if (!this.props.item) return;
-
-        this.setState({
-            title: this.props.item.title,
-            description: this.props.item.description
-        });
+    handleSubmit(e) {
+        e.preventDefault()
+        this.create()
     }
 
     async create() {
-
+        let todo = { title: this.state.title, description: this.state.description, status: "offen" }
         this.setState({ loader: true })
-        const requestOptions = {
-            method: 'POST',           // HTTP-Methode (GET, POST, PUT, DELETE, etc.)
-            headers: {
-                'Content-Type': 'application/json'   // Setzt den Content-Type auf JSON (je nach API-Anforderung)
-            },
-            body: JSON.stringify({    // Der Body enthält die Daten, die an den Server gesendet werden
-                title: this.state.title,
-                description: this.state.description
-            })
-        }
-        try {
-            await fetch("http://localhost:5000/todos", requestOptions)
-            this.props.getData()
-            this.setState({ open: false })
-        } catch (error) {
-            console.error(error)
-        }
-        finally {
-            this.setState({ title: "", description: "", loader: false })
-        }
-    }
-    handleSubmit(e) {
-        e.preventDefault()
-        if (this.props.action === "create") {
-            this.create()
-        } else {
-            this.update()
-        }
-    }
-    async update() {
-
-
-        try {
-            const requestOptions = {
-                method: 'PUT',
-                body: JSON.stringify({ title: this.state.title, description: this.state.description }),
-                headers: {
-                    'Content-Type': 'application/json'   // Setzt den Content-Type auf JSON (je nach API-Anforderung)
-                },
-            }
-            await fetch(`http://localhost:5000/todos/${this.props.item.id}`, requestOptions)
-            this.props.getData()
-            this.setState({ open: false })
-        } catch (error) {
+        const [error, data] = await TodoService.createTodo(todo);
+        if (error) {
             console.error(error);
-        } finally {
-            this.setState({ loader: false })
+        } else {
+            this.setState({ data, loader: false, open: false });
+            this.props.getData();
+            enqueueSnackbar('Todo erfolgreich erstellt', { variant: 'success' });
         }
     }
+    /*    
+    
+        handleOpen() {
+            this.setState({ open: true });
+            if (!this.props.item) return;
+    
+            this.setState({
+                title: this.props.item.title,
+                description: this.props.item.description
+            });
+        }
+    
+      
 
-
+        async update() {
+    
+    
+            try {
+                const requestOptions = {
+                    method: 'PUT',
+                    body: JSON.stringify({ title: this.state.title, description: this.state.description }),
+                    headers: {
+                        'Content-Type': 'application/json'   // Setzt den Content-Type auf JSON (je nach API-Anforderung)
+                    },
+                }
+                await fetch(`http://localhost:5001/todos/${this.props.item.id}`, requestOptions)
+                this.props.getData()
+                this.setState({ open: false })
+            } catch (error) {
+                console.error(error);
+            } finally {
+                this.setState({ loader: false })
+            }
+        }
+    
+     */
 
     render() {
         const create = this.props.action === "create";

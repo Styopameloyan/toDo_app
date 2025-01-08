@@ -2,11 +2,11 @@ import React from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Checkbox, IconButton, Typography, } from "@mui/material";
 import { Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogTitle, } from "@mui/material";
 import { ExpandMore } from '@mui/icons-material';
-
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateDialog from './createDialog';
-
-
+import { TodoService } from '../services/Todo';
+import { enqueueSnackbar } from 'notistack';
+import "../css/todo.css"
 class Todo extends React.Component {
 
     constructor(props) {
@@ -18,56 +18,52 @@ class Todo extends React.Component {
         }
 
     }
+    async componentDidMount() {
 
-
-
+    }
     async delete() {
         this.setState({ loader: true })
-        try {
-            await fetch(`http://localhost:5000/todos/${this.props.item.id}`, { method: 'DELETE' })
-            this.props.getData()
-        } catch (error) {
+        const [error] = await TodoService.deleteTodo(this.props.item.rowid);
+        if (error) {
             console.error(error);
-        } finally {
-            this.setState({ loader: false, open: false })
+            enqueueSnackbar(error.message, { variant: "error" });
         }
+        enqueueSnackbar('Todo erfolgreich gelöscht', { variant: 'success' });
+        this.props.getData()
+        this.setState({ loader: false, open: false });
     }
-
-
     async handleStatus() {
         let status = this.props.item.status
-
+        this.setState({ loader: true })
         if (this.props.item.status === "offen") {
             status = "fertig"
+            const [error] = await TodoService.updateTodo(this.props.item.rowid, status);
+            if (error) {
+                console.error(error);
+                enqueueSnackbar(error.message, { variant: "error" });
+            }
         } else {
             status = "offen"
-        }
-
-        try {
-            const requestOptions = {
-                method: 'PUT',
-                body: JSON.stringify({ status: status }),
-                headers: {
-                    'Content-Type': 'application/json'   // Setzt den Content-Type auf JSON (je nach API-Anforderung)
-                },
+            const [error] = await TodoService.updateTodo(this.props.item.rowid, status);
+            if (error) {
+                console.error(error);
+                enqueueSnackbar(error.message, { variant: "error" });
             }
-            await fetch(`http://localhost:5000/todos/${this.props.item.id}`, requestOptions)
-            this.props.getData()
-        } catch (error) {
-            console.error(error);
         }
-
+        enqueueSnackbar('Status erfolgreich geupdated', { variant: 'success' });
+        this.props.getData()
+        this.setState({ loader: false });
     }
-
-
-
     render() {
         const status = this.props.item.status === "offen";
+
+
         return <>
-            <Accordion expanded={this.state.expandet} >
+            <Accordion className="accordion" expanded={this.state.expandet} >
                 <AccordionSummary expandIcon={<ExpandMore onClick={() => this.setState({ expandet: !this.state.expandet })} />} >
                     <div className={`w-100 ${status ? "" : "text-decoration-line-through text-secondary"}`} onClick={() => this.setState({ expandet: !this.state.expandet })}>
                         <Typography variant='h6' >{this.props.item.title}</Typography>
+
                     </div>
 
                     <div className='d-flex align-items-center' >
@@ -82,8 +78,16 @@ class Todo extends React.Component {
                     </div>
 
                 </AccordionSummary>
-                <Typography variant='subtitle2' style={{ fontWeight: "bold", marginLeft: "10px" }} >Beschreibung:</Typography>
-                <AccordionDetails style={{ backgroundColor: "#f5f5f5", minHeight: "100px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "10px" }}>
+                    <Typography variant="subtitle2" style={{ fontWeight: "bold", }}>
+                        Beschreibung:
+                    </Typography>
+                    <Typography variant="subtitle2" style={{ fontWeight: "bold", }}>
+                        Ersteller:{this.props.item.ersteller}
+                    </Typography>
+                </div>
+
+                <AccordionDetails className="accordion-details" style={{ backgroundColor: "#f5f5f5", minHeight: "100px" }}>
                     {this.props.item.description}
                 </AccordionDetails>
             </Accordion >
