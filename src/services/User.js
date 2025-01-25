@@ -39,9 +39,10 @@ export class UserService {
 
     static login = async (mail, password) => {
         const requestOption = this.getRequestOptions({ body: { mail, password } });
+        localStorage.setItem("CurrentUser", mail)
 
         try {
-            const response = await fetch("http://localhost:5001/api/users/login", requestOption);
+            const response = await fetch("http://192.168.0.191:5001/api/users/login", requestOption);
             const data = await response.json();
 
             if (!response.ok) return [new Error("Ungültige E-Mail oder Kennwort.")]
@@ -60,7 +61,7 @@ export class UserService {
         const requestOption = this.getRequestOptions({ body: { mail, password, displayName } });
 
         try {
-            const response = await fetch("http://localhost:5001/api/users/register", requestOption);
+            const response = await fetch("http://192.168.0.191:5001/api/users/register", requestOption);
             const data = await response.json();
             if (!response.ok) return [new Error("Registrierung Fehlgeschlagen")]
             return [null, data];
@@ -77,6 +78,23 @@ export class UserService {
         if (!/[!@#$%^&*(),.?":{}|<>]/.test(pass1)) return [true, "Passwort muss min. 1 Sonderzeichen enthalten"]
         if (!/[0-9]/.test(pass1)) return [true, "Passwort muss min. 1 Ziffer enthalten"]
         return [false, ""];
+    }
+
+    static find = async () => {
+        const requestOption = this.getRequestOptions();
+
+        try {
+            const response = await fetch("http://192.168.0.191:5001/api/users/find", requestOption);
+            const data = await response.json();
+
+            if (!response.ok) return [new Error("Fehler Beim holen der User")]
+
+            return [null, data];
+
+        } catch (error) {
+            console.log(error);
+
+        }
     }
 
 

@@ -48,7 +48,7 @@ class Reg extends React.Component {
                         <input
                             required
                             onChange={(e) => this.setState({ displayname: e.target.value })}
-                            placeholder="Benutzername"
+                            placeholder="Vor und Nachname"
                             size="small"
                         />
                     </div>

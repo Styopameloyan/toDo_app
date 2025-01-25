@@ -1,5 +1,5 @@
 import React from "react";
-import { Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Tooltip } from "@mui/material";
+import { Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextareaAutosize, TextField, Tooltip } from "@mui/material";
 import { Add, Edit } from '@mui/icons-material';
 import { TodoService } from "../services/Todo";
 import { enqueueSnackbar } from "notistack";
@@ -123,7 +123,10 @@ class CreateDialog extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault()
-        this.create()
+        if (this.props.action === "create") { this.create() }
+        else if (this.props.action === "edit") { this.editTodo() }
+
+
     }
 
     async create() {
@@ -138,47 +141,39 @@ class CreateDialog extends React.Component {
             enqueueSnackbar('Todo erfolgreich erstellt', { variant: 'success' });
         }
     }
-    /*    
-    
-        handleOpen() {
-            this.setState({ open: true });
-            if (!this.props.item) return;
-    
-            this.setState({
-                title: this.props.item.title,
-                description: this.props.item.description
-            });
-        }
-    
-      
 
-        async update() {
-    
-    
-            try {
-                const requestOptions = {
-                    method: 'PUT',
-                    body: JSON.stringify({ title: this.state.title, description: this.state.description }),
-                    headers: {
-                        'Content-Type': 'application/json'   // Setzt den Content-Type auf JSON (je nach API-Anforderung)
-                    },
-                }
-                await fetch(`http://localhost:5001/todos/${this.props.item.id}`, requestOptions)
-                this.props.getData()
-                this.setState({ open: false })
-            } catch (error) {
-                console.error(error);
-            } finally {
-                this.setState({ loader: false })
-            }
+
+    handleOpen() {
+        this.setState({ open: true });
+        if (!this.props.item) return;
+        this.setState({
+            title: this.props.item.title,
+            description: this.props.item.description
+        });
+    }
+
+
+
+    async editTodo() {
+        const [error] = await TodoService.editTodo(this.props.item.rowid, this.state.title, this.state.description);
+        if (error) {
+            console.error(error);
+            enqueueSnackbar(error.message, { variant: "error" });
+
+        } else {
+            this.props.getData();
+            this.setState({ open: false });
+            enqueueSnackbar('Todo erfolgreich geupdated', { variant: 'success' });
         }
-    
-     */
+
+    }
+
+
 
     render() {
         const create = this.props.action === "create";
 
-        return < >
+        return <>
 
             {create ?
                 <Tooltip title="Neues Todo erstellen">
@@ -186,23 +181,20 @@ class CreateDialog extends React.Component {
                         <Add />
                     </IconButton>
                 </Tooltip> :
-                <Tooltip title="Bearbeiten">
-                    <IconButton className="ms-auto" color="primary" onClick={() => this.handleOpen()} size="small" >
-                        <Edit />
-                    </IconButton>
-                </Tooltip>
+                <Button color="warning" variant="contained" title="Bearbeiten" onClick={() => this.handleOpen()}>
+                    Bearbeiten
+                    <Edit />
+                </Button>
             }
 
 
 
             <Dialog open={this.state.open} onClose={() => this.setState({ open: false })}>
-                <DialogTitle>
+                <DialogTitle variant="h4">
                     {create ? "Todo Erstellen" : "Todo Bearbeiten"}
                 </DialogTitle>
                 <form onSubmit={(e) => this.handleSubmit(e)}>
                     <DialogContent>
-
-
                         <TextField
                             value={this.state.title}
                             name="Titel"
@@ -212,13 +204,15 @@ class CreateDialog extends React.Component {
                             className="col-12 mt-2"
                             onChange={(e) => this.setState({ title: e.target.value })}
                         />
-
-                        <TextField
+                        <TextareaAutosize
+                            style={{ border: "1px solid #b7b7b7", borderRadius: "5px" }}
                             value={this.state.description}
+
                             name="Beschreibung"
                             label="Beschreibung"
                             required placeholder="Beschreibung"
                             className="col-12 mt-3"
+                            minRows={4}
                             multiline
                             onChange={(e) => this.setState({ description: e.target.value })}
                         />
@@ -226,7 +220,9 @@ class CreateDialog extends React.Component {
                     </DialogContent>
 
                     <DialogActions>
-                        <Button variant="contained" color="primary" type="submit">Speichern</Button>
+                        <Button sx={{ marginBottom: "15px", float: "left", marginLeft: "15px" }} variant="contained" color="success" type="submit">Speichern</Button>
+                        <Button sx={{ marginBottom: "15px", float: "right", marginRight: "15px" }} variant="contained" color="error" onClick={() => this.setState({ open: false })}>Abbrechen</Button>
+
                     </DialogActions>
                 </form>
                 <Backdrop open={this.state.loader}>

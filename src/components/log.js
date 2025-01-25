@@ -22,13 +22,16 @@ class Login extends React.Component {
     async Login(e) {
         e.preventDefault();
         this.setState({ loader: true });
-        const [error] = await UserService.login(this.state.email, this.state.passwort);
+        const [error, data] = await UserService.login(this.state.email, this.state.passwort);
+
+        const { password, ...ohnePassword } = data;
+        localStorage.setItem("User", JSON.stringify(ohnePassword));
         if (error) {
             enqueueSnackbar(error.message, { variant: "error" });
             this.setState({ loader: false });
         }
         else {
-            enqueueSnackbar("Anmeldung hat geklappt.", { variant: "success" });
+            enqueueSnackbar(`Herzlich Willkommen ${data.displayName}`, { variant: "success" });
             this.setState({ loader: false });
             document.getElementById('logout').style.display = "block";
             this.props.handleLogin();
