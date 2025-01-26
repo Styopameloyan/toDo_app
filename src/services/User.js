@@ -35,17 +35,19 @@ export class UserService {
         this.requestOptions.headers.Authorization = `Bearer ${user.token}`;
 
         localStorage.token = user.token;
+
     }
 
     static login = async (mail, password) => {
         const requestOption = this.getRequestOptions({ body: { mail, password } });
-        localStorage.setItem("CurrentUser", mail)
-
+        localStorage.setItem("CurrentUser", mail);
         try {
             const response = await fetch("http://192.168.0.191:5001/api/users/login", requestOption);
             const data = await response.json();
 
-            if (!response.ok) return [new Error("Ungültige E-Mail oder Kennwort.")]
+            if (!response.ok) {
+                return [new Error("Ungültige E-Mail oder Kennwort.")];
+            }
 
             this.afterLogin(data);
             return [null, data];
@@ -54,8 +56,7 @@ export class UserService {
             console.log(error);
             return [new Error("Ungültige E-Mail oder Kennwort."), null];
         }
-    }
-
+    };
 
     static register = async (mail, password, displayName) => {
         const requestOption = this.getRequestOptions({ body: { mail, password, displayName } });

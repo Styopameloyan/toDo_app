@@ -100,7 +100,6 @@ export class TodoService {
         }
     }
     static makeAvatar = async (displayname) => {
-
         const fullName = displayname.split(' ');
         const firstName = fullName[0].charAt(0).toUpperCase();
         const lastName = fullName[1] ? fullName[1].charAt(0).toUpperCase() : '';

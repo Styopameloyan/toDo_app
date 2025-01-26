@@ -1,12 +1,13 @@
 import React from "react";
 import CreateDialog from "./components/createDialog";
 import Todo from "./components/todo";
-import { Backdrop, CircularProgress, IconButton, Menu, Paper, TextField, Typography, MenuItem } from "@mui/material";
+import { Backdrop, CircularProgress, IconButton, Menu, Paper, TextField, Typography, MenuItem, Tooltip } from "@mui/material";
 import FlipMove from 'react-flip-move';
 import { TodoService } from "./services/Todo";
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { enqueueSnackbar } from "notistack";
 import ImportExportIcon from '@mui/icons-material/ImportExport';
+import Menü from './components/navMenü';
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -74,10 +75,6 @@ class App extends React.Component {
   }
 
 
-
-
-
-
   setSort(sort) {
     this.setState({ sort: false });
     if (sort === 'Neuste') {
@@ -97,16 +94,19 @@ class App extends React.Component {
     const Filter = ["Alle", "Offen", "Fertig", "In Arbeit", "Erstellt", "Mir Zugewiesen"]
     const SortOptions = ["Neuste", "Älteste"]
     return (<>
+      <Menü changeTheme={() => this.props.changeTheme()} />
+
       <Paper className="d-flex align-items-center gap-4 mt-4 p-2 px-4 todoHeader">
         <TextField placeholder="Suchen..." size="small" onChange={(e) => this.handleSearch(e.target.value)} />
 
-        {/* Create */}
+
         <CreateDialog action="create" getData={this.getData.bind(this)} />
 
-        {/* Sort */}
-        <IconButton>
-          <ImportExportIcon onClick={(e) => this.setState({ sort: true, sortAnchorEl: e.currentTarget })} />
-        </IconButton>
+        <Tooltip title="Sortieren"  >
+          <IconButton>
+            <ImportExportIcon onClick={(e) => this.setState({ sort: true, sortAnchorEl: e.currentTarget })} />
+          </IconButton>
+        </Tooltip>
         <Menu
           open={this.state.sort}
           anchorEl={this.state.sortAnchorEl}
@@ -118,11 +118,13 @@ class App extends React.Component {
             </MenuItem>
           ))}
         </Menu>
-        {/* Filter */}
 
-        <IconButton>
-          <FilterAltIcon onClick={(e) => this.setState({ filter: true, anchorEl: e.currentTarget })} />
-        </IconButton>
+
+        <Tooltip title="Filtern"  >
+          <IconButton>
+            <FilterAltIcon onClick={(e) => this.setState({ filter: true, anchorEl: e.currentTarget })} />
+          </IconButton>
+        </Tooltip>
         <Menu
           open={this.state.filter}
           anchorEl={this.state.anchorEl}

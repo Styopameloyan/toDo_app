@@ -24,14 +24,11 @@ class Todo extends React.Component {
         }
     }
     async componentDidMount() {
-        //let avatar = await TodoService.makeAvatar(this.props.item.creator.displayName);
         const [error, data] = await UserService.find();
-
         if (error) {
             console.log(error);
-
         }
-        this.setState({/*  avatar: avatar, */ data: data })
+        this.setState({ data: data })
     }
 
     async delete() {
@@ -70,12 +67,13 @@ class Todo extends React.Component {
         return <>
             <Accordion className="accordion">
                 <AccordionSummary
+
                     expandIcon={
                         <ExpandMore onClick={() => this.setState({ expandet: !this.state.expandet })} />
                     }
                 >
                     <div
-                        className={`w-100 ${isOffen ? "" : "text-decoration-line-through text-secondary"
+                        className={`w-100 ${isOffen ? "" : " text-secondary"
                             }`}
                         onClick={() => this.setState({ expandet: !this.state.expandet })}
                     >
@@ -95,7 +93,7 @@ class Todo extends React.Component {
                     </div>
                 </AccordionSummary>
 
-                <Card sx={{ backgroundColor: "rgba(168, 168, 168, 0.1)", padding: "10px" }}>
+                <Card sx={{ padding: "10px" }}>
                     <CardContent className="row">
                         <Typography variant="span" color="" className="col-md-6 ">
                             <small >Beschreibung:</small>

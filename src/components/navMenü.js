@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AppBar, Toolbar, Typography, Box, Avatar, } from '@mui/material';
+import { AppBar, Toolbar, Typography, Box, Avatar, Tooltip, } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import { TodoService } from '../services/Todo';
@@ -12,22 +12,48 @@ class NavBar extends Component {
             open: false,
             avatar: "",
             user: JSON.parse(localStorage.getItem('User')),
-
+            UserTodos: {},
         };
     }
 
     async componentDidMount() {
-        if (!localStorage.getItem('token')) {
-            document.getElementById('logout').style.display = "none";
-        }
-        let avatar = await TodoService.makeAvatar(this.state.user.displayName);
+        this.setState({ user: JSON.parse(localStorage.getItem('User')) });
+        const avatar = await TodoService.makeAvatar(this.state.user.displayName);
         this.setState({ avatar });
-
     }
+
+
+
     logOut() {
         localStorage.removeItem('token');
         window.location.reload();
     };
+    async handleClick() {
+        const [error, data] = await TodoService.getTodos();
+        if (error) {
+            console.error(error.message);
+        }
+        const UserTodos = {
+
+            offenCount: 0,
+            inArbeitCount: 0,
+            fertigCount: 0,
+        }
+        for (let i = 0; i < data.length; i++) {
+
+            if (data[i].assignee === this.state.user.mail && data[i].status === "offen") {
+                UserTodos.offenCount++;
+            } else if (data[i].assignee === this.state.user.mail && data[i].status === "in arbeit") {
+                UserTodos.inArbeitCount++;
+            } else if (data[i].assignee === this.state.user.mail && data[i].status === "fertig") {
+                UserTodos.fertigCount++;
+            }
+        }
+        this.setState({
+            open: true,
+            UserTodos: UserTodos
+        });
+    }
 
     render() {
 
@@ -40,23 +66,25 @@ class NavBar extends Component {
                                 NEUE SYSTEM
                             </Typography>
 
-                            <Brightness4Icon
-                                className="me-3"
-                                onClick={() => this.props.changeTheme()}
-                            />
-                            <LogoutIcon
-                                className="ms-3"
-                                id="logout"
-                                onClick={() => this.logOut()}
-                            />
-
-
-                            <Avatar onClick={() => this.setState({ open: true })} className="ms-3">{this.state.avatar}</Avatar>
-
+                            <Tooltip title="Theme">
+                                <Brightness4Icon
+                                    className="me-3"
+                                    onClick={() => this.props.changeTheme()}
+                                />
+                            </Tooltip>
+                            <Tooltip title="Logout">
+                                <LogoutIcon
+                                    className="ms-3"
+                                    onClick={() => this.logOut()}
+                                />
+                            </Tooltip>
+                            <Tooltip title="Profil" >
+                                <Avatar onClick={() => this.handleClick()} className="ms-3">{this.state.avatar}</Avatar>
+                            </Tooltip>
                         </Toolbar>
                     </AppBar>
                 </Box>
-                <UserProfile user={this.state.user} open={this.state.open} close={() => this.setState({ open: false })} />
+                <UserProfile UserTodos={this.state.UserTodos} user={this.state.user} open={this.state.open} close={() => this.setState({ open: false })} />
             </div>
         );
     }

@@ -23,7 +23,6 @@ class Login extends React.Component {
         e.preventDefault();
         this.setState({ loader: true });
         const [error, data] = await UserService.login(this.state.email, this.state.passwort);
-
         const { password, ...ohnePassword } = data;
         localStorage.setItem("User", JSON.stringify(ohnePassword));
         if (error) {
@@ -33,8 +32,8 @@ class Login extends React.Component {
         else {
             enqueueSnackbar(`Herzlich Willkommen ${data.displayName}`, { variant: "success" });
             this.setState({ loader: false });
-            document.getElementById('logout').style.display = "block";
             this.props.handleLogin();
+
         }
     }
     openReg() {

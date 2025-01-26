@@ -1,5 +1,7 @@
-import { Dialog, DialogContent, DialogTitle, Grid2, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Grid2, Typography } from '@mui/material';
 import React from 'react';
+
+
 
 
 
@@ -8,11 +10,11 @@ class UserProfile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            offen: 0,
-            inArbeit: 0,
-            fertig: 0
         }
     }
+
+
+
     render() {
         return <Dialog open={this.props.open} onClose={this.props.close}>
             <DialogTitle>Profil</DialogTitle>
@@ -24,25 +26,18 @@ class UserProfile extends React.Component {
                         Meine Todos
                     </Typography>
 
-                    <List >
-                        <ListItem >
-                            <span className='badge bg-secondary'>OFFENE</span>
-                            <ListItemText primary={this.state.offen} />
-                        </ListItem>
-                        <ListItem >
-                            <span className='badge bg-warning'>IN ARBEIT</span>
-                            <ListItemText primary={this.state.inArbeit} />
-                        </ListItem>
-                        <ListItem >
-                            <span className='badge bg-success'>FERTIG</span>
-                            <ListItemText primary={this.state.fertig} />
-                        </ListItem>
-                    </List>
-
+                    <div className="d-flex row ">
+                        <div className="gap-2">
+                            <span className="badge bg-secondary">OFFENE {this.props.UserTodos.offenCount}</span>
+                        </div>
+                        <div className="gap-2">
+                            <span className="badge bg-warning">IN ARBEIT {this.props.UserTodos.inArbeitCount}</span>
+                        </div>
+                        <div className="gap-2">
+                            <span className="badge bg-success ">FERTIG {this.props.UserTodos.fertigCount}</span>
+                        </div>
+                    </div>
                 </Grid2>
-
-
-
             </DialogContent>
         </Dialog>;
     }
